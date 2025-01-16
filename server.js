@@ -1,6 +1,5 @@
 import fastify from "fastify";
 import fastifyStatic from "@fastify/static";
-import fastifyCors from "@fastify/cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import { AsyncDatabase } from "promised-sqlite3";
@@ -23,12 +22,6 @@ const db = await AsyncDatabase.open("./pizza.sqlite");
 server.register(fastifyStatic, {
     root: path.join(__dirname, "public"),
     prefix: "/public/",
-});
-
-await server.register(fastifyCors, {
-    origin: process.env.NODE_ENV === 'production'
-        ? process.env.ALLOWED_ORIGIN
-        : 'http://localhost:3000'
 });
 
 server.get("/api/pizzas", async function getPizzas(req, res) {
