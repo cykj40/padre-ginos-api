@@ -22,7 +22,16 @@ const db = createClient({
 
 // Basic CORS headers
 server.addHook('preHandler', (request, reply, done) => {
-    reply.header('Access-Control-Allow-Origin', '*');
+    const allowedOrigins = [
+        'http://localhost:3000',
+        ...(process.env.ALLOWED_ORIGINS || '').split(',').filter(Boolean)
+    ];
+
+    const origin = request.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        reply.header('Access-Control-Allow-Origin', origin);
+    }
+
     reply.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     reply.header('Access-Control-Allow-Headers', 'Content-Type');
     done();
