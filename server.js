@@ -305,17 +305,28 @@ server.post("/api/contact", async function contactForm(req, res) {
     res.send({ success: "Message received" });
 });
 
-const start = async () => {
-    try {
-        await server.listen({
-            port: PORT,
-            host: '0.0.0.0' // Important for Vercel
-        });
-        console.log(`Server running on port ${PORT}`);
-    } catch (err) {
-        console.error(err);
-        process.exit(1);
-    }
+// Create the request handler
+const handler = async (req, res) => {
+    await server.ready();
+    server.server.emit('request', req, res);
 };
 
-start();
+// Handle local development
+if (process.env.NODE_ENV !== 'production') {
+    const start = async () => {
+        try {
+            await server.listen({
+                port: process.env.PORT || 3000,
+                host: '0.0.0.0'
+            });
+            console.log(`Server running on port ${process.env.PORT || 3000}`);
+        } catch (err) {
+            console.error(err);
+            process.exit(1);
+        }
+    };
+    start();
+}
+
+// Export the handler for Vercel
+export default handler;
