@@ -322,6 +322,23 @@ server.post("/api/contact", async function contactForm(req, res) {
     res.send({ success: "Message received" });
 });
 
+// Add a root route handler
+server.get('/', async (request, reply) => {
+    reply.send({
+        name: 'Padre Gino\'s Pizza API',
+        version: '1.0.0',
+        endpoints: {
+            pizzas: '/api/pizzas',
+            pizzaOfTheDay: '/api/pizza-of-the-day',
+            orders: '/api/orders',
+            order: '/api/order?id={orderId}',
+            pastOrders: '/api/past-orders',
+            pastOrder: '/api/past-order/{orderId}',
+            contact: '/api/contact'
+        }
+    });
+});
+
 // Export for Vercel
 export default async (req, res) => {
     await server.ready();
