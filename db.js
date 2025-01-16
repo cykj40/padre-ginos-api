@@ -1,12 +1,11 @@
-const { Pool } = require('pg');
+import { createClient } from '@libsql/client'
+import dotenv from 'dotenv'
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? {
-        rejectUnauthorized: false
-    } : false
-});
+dotenv.config()
 
-module.exports = {
-    query: (text, params) => pool.query(text, params),
-};
+const client = createClient({
+    url: process.env.TURSO_DATABASE_URL,
+    authToken: process.env.TURSO_AUTH_TOKEN
+})
+
+export default client

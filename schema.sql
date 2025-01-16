@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS pizzas (
 );
 
 CREATE TABLE IF NOT EXISTS orders (
-    order_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id INTEGER PRIMARY KEY,
     date TEXT NOT NULL,
     time TEXT NOT NULL
 );
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS order_details (
     PRIMARY KEY (order_id, pizza_id)
 );
 
-INSERT OR IGNORE INTO pizza_types (pizza_type_id, name, category, ingredients) VALUES
+REPLACE INTO pizza_types (pizza_type_id, name, category, ingredients) VALUES
     ('napolitana', 'Napolitana', 'Classic', 'San Marzano tomatoes, fresh mozzarella, basil, olive oil'),
     ('sicilian', 'Sicilian', 'Classic', 'Thick crust, tomatoes, herbs, onions, anchovies, hard cheeses'),
     ('hawaiian', 'Hawaiian', 'Specialty', 'Ham, pineapple, mozzarella, tomato sauce'),
@@ -40,7 +40,7 @@ INSERT OR IGNORE INTO pizza_types (pizza_type_id, name, category, ingredients) V
     ('mexican', 'Mexican', 'Gourmet', 'Ground beef, jalapeños, tomatoes, onions, Mexican spices'),
     ('greek', 'Greek', 'Gourmet', 'Feta, olives, red onions, tomatoes, oregano');
 
-INSERT OR IGNORE INTO pizzas (pizza_id, pizza_type_id, size, price) VALUES
+REPLACE INTO pizzas (pizza_id, pizza_type_id, size, price) VALUES
     ('napolitana_s', 'napolitana', 'S', 11.99),
     ('napolitana_m', 'napolitana', 'M', 13.99),
     ('napolitana_l', 'napolitana', 'L', 15.99),

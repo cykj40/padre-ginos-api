@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "init-db": "node init-db.js",
-    "vercel-build": "echo 'Building API...'"
+    "init-db": "node init-db.js"
   },
   "keywords": [],
   "author": "",
@@ -17,10 +16,9 @@
     "@fastify/static": "7.0.4",
     "@libsql/client": "^0.14.0",
     "dotenv": "^16.4.7",
-    "fastify": "4.28.1",
-    "pino-pretty": "11.2.2"
+    "fastify": "4.28.1"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": "20.x"
   }
 }

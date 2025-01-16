@@ -7,15 +7,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Create Fastify instance without logger in production
 const server = fastify({
-    logger: {
-        transport: {
-            target: "pino-pretty",
-        },
-    },
+    logger: process.env.NODE_ENV !== 'production'
 });
-
-const PORT = process.env.PORT || 3000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,9 +20,31 @@ const db = createClient({
     authToken: process.env.TURSO_AUTH_TOKEN
 });
 
+// Basic CORS headers
+server.addHook('preHandler', (request, reply, done) => {
+    reply.header('Access-Control-Allow-Origin', '*');
+    reply.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    reply.header('Access-Control-Allow-Headers', 'Content-Type');
+    done();
+});
+
+// Handle OPTIONS requests
+server.options('/*', (request, reply) => {
+    reply.send();
+});
+
 server.register(fastifyStatic, {
     root: path.join(__dirname, "public"),
     prefix: "/public/",
+    decorateReply: false
+});
+
+server.addContentTypeParser('application/json', { parseAs: 'string' }, async (req, body) => {
+    try {
+        return JSON.parse(body);
+    } catch (err) {
+        throw new Error('Invalid JSON');
+    }
 });
 
 server.get("/api/pizzas", async function getPizzas(req, res) {
@@ -305,28 +322,8 @@ server.post("/api/contact", async function contactForm(req, res) {
     res.send({ success: "Message received" });
 });
 
-// Create the request handler
-const handler = async (req, res) => {
+// Export for Vercel
+export default async (req, res) => {
     await server.ready();
     server.server.emit('request', req, res);
 };
-
-// Handle local development
-if (process.env.NODE_ENV !== 'production') {
-    const start = async () => {
-        try {
-            await server.listen({
-                port: process.env.PORT || 3000,
-                host: '0.0.0.0'
-            });
-            console.log(`Server running on port ${process.env.PORT || 3000}`);
-        } catch (err) {
-            console.error(err);
-            process.exit(1);
-        }
-    };
-    start();
-}
-
-// Export the handler for Vercel
-export default handler;
