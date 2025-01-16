@@ -30,10 +30,16 @@ server.addHook('preHandler', (request, reply, done) => {
     const origin = request.headers.origin;
     if (allowedOrigins.includes(origin)) {
         reply.header('Access-Control-Allow-Origin', origin);
+        // Add additional CORS headers
+        reply.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        reply.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
+        reply.header('Access-Control-Allow-Credentials', 'true');
+        // Add cache control for static files
+        if (request.url.startsWith('/public/')) {
+            reply.header('Cache-Control', 'public, max-age=31536000');
+        }
     }
 
-    reply.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    reply.header('Access-Control-Allow-Headers', 'Content-Type');
     done();
 });
 
@@ -45,7 +51,11 @@ server.options('/*', (request, reply) => {
 server.register(fastifyStatic, {
     root: path.join(__dirname, "public"),
     prefix: "/public/",
-    decorateReply: false
+    decorateReply: false,
+    setHeaders: (res, path, stat) => {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Cache-Control', 'public, max-age=31536000');
+    }
 });
 
 server.addContentTypeParser('application/json', { parseAs: 'string' }, async (req, body) => {
