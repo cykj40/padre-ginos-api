@@ -16,12 +16,9 @@
   "dependencies": {
     "@fastify/static": "7.0.4",
     "@libsql/client": "^0.14.0",
-    "@fastify/cors": "^8.0.0",
     "dotenv": "^16.4.7",
     "fastify": "4.28.1",
-    "pino-pretty": "11.2.2",
-    "promised-sqlite3": "2.1.0",
-    "sqlite3": "^5.1.7"
+    "pino-pretty": "11.2.2"
   },
   "engines": {
     "node": ">=14.0.0"
