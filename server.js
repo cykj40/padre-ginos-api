@@ -3,6 +3,7 @@ import fastifyStatic from "@fastify/static";
 import path from "path";
 import { fileURLToPath } from "url";
 import { AsyncDatabase } from "promised-sqlite3";
+import cors from "cors";
 
 const server = fastify({
     logger: {
@@ -23,6 +24,12 @@ server.register(fastifyStatic, {
     root: path.join(__dirname, "public"),
     prefix: "/public/",
 });
+
+server.use(cors({
+    origin: process.env.NODE_ENV === 'production'
+        ? process.env.ALLOWED_ORIGIN
+        : 'http://localhost:3000'
+}));
 
 server.get("/api/pizzas", async function getPizzas(req, res) {
     const pizzasPromise = db.all(
@@ -300,8 +307,8 @@ server.post("/api/contact", async function contactForm(req, res) {
 
 const start = async () => {
     try {
-        await server.listen({ port: PORT });
-        console.log(`Server listening on port ${PORT}`);
+        await server.listen(PORT);
+        console.log(`Server running on port ${PORT}`);
     } catch (err) {
         console.error(err);
         process.exit(1);
