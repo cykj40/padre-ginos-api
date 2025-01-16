@@ -29,22 +29,30 @@ server.addHook('preHandler', (request, reply, done) => {
 
     const origin = request.headers.origin;
     if (allowedOrigins.includes(origin)) {
+        // Set CORS headers
         reply.header('Access-Control-Allow-Origin', origin);
-        // Add additional CORS headers
         reply.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
         reply.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
         reply.header('Access-Control-Allow-Credentials', 'true');
-        // Add cache control for static files
-        if (request.url.startsWith('/public/')) {
-            reply.header('Cache-Control', 'public, max-age=31536000');
-        }
+    }
+
+    // Set content type for API responses
+    if (request.url.startsWith('/api/')) {
+        reply.header('Content-Type', 'application/json');
     }
 
     done();
 });
 
-// Handle OPTIONS requests
+// Handle preflight requests
 server.options('/*', (request, reply) => {
+    const origin = request.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        reply.header('Access-Control-Allow-Origin', origin);
+        reply.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        reply.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
+        reply.header('Access-Control-Allow-Credentials', 'true');
+    }
     reply.send();
 });
 
